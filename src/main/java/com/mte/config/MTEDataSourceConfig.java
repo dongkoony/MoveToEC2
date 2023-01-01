@@ -1,4 +1,4 @@
-package com.mte.com.mte.config;
+package com.mte.config;
 
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
