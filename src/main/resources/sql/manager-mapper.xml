@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mzc.mad.sql.discovery-mapper">
+
+    <select id="selectHealth"
+            resultType="String">
+        select 1
+    </select>
+    <select id="selectTargetHost"
+            resultType="com.mte.CollectContext">
+        select
+            ip_address as ipaddress,
+            user as user,
+            port as port,
+            password as password
+        from COLLECT_TARGET_HOST
+    </select>
+
+    <insert id="insertCollectTargetInfo"
+            parameterType="com.mte.dto.ColletorTargetInfoDto">
+        insert into COLLECT_TARGET_HOST_INFO (
+            ip_address,
+            hostname,
+            os_name,
+            os_version,
+            cpu_vendor,
+            cpu_model,
+            cpu_mhz,
+            cpu_core,
+            cpu_v_core,
+            cpu_socket,
+            cpu_hyper_threading_yn,
+            memory_size,
+            volume_size
+        ) values (
+            #{ipaddress},
+            #{hostName},
+            #{osName},
+            #{osVersion},
+            #{cpuVendor},
+            #{cpuModel},
+            #{cpuMhz},
+            #{cpuCore},
+            #{cpuVirtualCore},
+            #{cpuSocket},
+            #{hyperThreadingYn},
+            #{memorySize},
+            #{volumeSize})
+    </insert>
+
+</mapper>
