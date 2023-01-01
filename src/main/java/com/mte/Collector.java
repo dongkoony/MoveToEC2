@@ -4,7 +4,6 @@ import com.jcraft.jsch.*;
 
 import java.io.*;
 import java.util.Properties;
-import java.util.stream.Stream;
 
 public class Collector {
     private JSch client;
