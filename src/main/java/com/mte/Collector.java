@@ -55,7 +55,7 @@ public class Collector {
 
     private String exec(String command) throws Exception {
         String result = null;
-        int retryㅁㅁ = 0;
+        int retry = 0;
 
         StringBuffer script = new StringBuffer();
         script.append(command);
