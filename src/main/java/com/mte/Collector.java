@@ -75,7 +75,7 @@ public class Collector {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        } while(null == result || result.isEmpty());
+        } while(null == result || result.isEmpty() );
 
         return result;
     }
