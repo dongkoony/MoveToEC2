@@ -2,19 +2,19 @@ package com.mte;
 
 import com.jcraft.jsch.*;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Properties;
+import java.util.stream.Stream;
 
 public class Collector {
     private JSch client;
     private Session session;
-    private Channel channel;
 
-    private OutputStream os;
-    private InputStream ins;
+    private PrintStream stream;
+
+    private String prompt;
+    private ChannelShell channelShell;
+    private ByteArrayOutputStream outputStream;
 
     public Collector(String ipaddress,int port,String user,String password) throws Exception {
         client = new JSch();
@@ -26,57 +26,53 @@ public class Collector {
             session.setConfig(config);
             session.setPassword(password);
             session.connect();
-
-            System.out.println("=============="+ipaddress+" Session connected==============");
         }
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        outputStream = new ByteArrayOutputStream();
 
-        channel = session.openChannel("shell");
-        if(null != channel){
-            os = channel.getOutputStream();
-            ins = channel.getInputStream();
-
-            channel.connect();
-
-            System.out.println("=============="+ipaddress+" Channel connected==============");
+        channelShell = (ChannelShell) session.openChannel("shell");
+        if(null != channelShell){
+            channelShell.setOutputStream(outputStream);
+            stream = new PrintStream(channelShell.getOutputStream());
+            channelShell.connect();
         }
-
     }
-
     public void close() throws Exception{
-        if(null != ins){
-            ins.close();
+        if(null != stream){
+            stream.close();
         }
-        if(null != os){
-            os.close();
+        if(null != channelShell){
+            channelShell.disconnect();
+        }
+        if(null != session){
+            session.disconnect();
         }
     }
+
 
     private String exec(String command) throws Exception {
         String result = null;
-        int retry = 0;
+        stream.print(command+"\n");
+        stream.flush();
+        result = getResponse(outputStream);
+        return result;
+    }
 
-        StringBuffer script = new StringBuffer();
-        script.append(command);
-
-        if(!command.endsWith("\n")) {
-            script.append("\n");
+    private String getResponse(ByteArrayOutputStream outputStream) throws InterruptedException {
+        int retry = 5;
+        String result="";
+        for (int i = 1 ; i<retry; i++){
+            Thread.sleep(10);
+            result=outputStream.toString();
+            outputStream.reset();
+            return result;
         }
-        os.write(script.toString().getBytes());
-        os.flush();
+        return result;
+    }
 
-        do{
-            if (retry++ > 10){
-                break;
-            }
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        } while(null == result || result.isEmpty() );
-
+    public String execCommand(String command) throws Exception{
+        String result = exec(command);
+        result = result.substring(command.length(),result.lastIndexOf("\r\n"));
         return result;
     }
 }
