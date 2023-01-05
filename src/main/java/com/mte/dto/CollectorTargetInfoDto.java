@@ -1,6 +1,6 @@
 package com.mte.dto;
 
-public class ColletorTargetInfoDto {
+public class CollectorTargetInfoDto {
     private String ipAddress;
     private String hostName;
     private String osName;

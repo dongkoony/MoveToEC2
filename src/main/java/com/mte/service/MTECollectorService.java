@@ -1,8 +1,12 @@
 package com.mte.service;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import com.mte.CollectContext;
 import com.mte.dao.MTECollectorDao;
+import com.mte.dto.CollectorTargetInfoDto;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,20 +27,40 @@ public class MTECollectorService {
 
     private Gson gson;
 
-    public List<CollectContext> retrieveTargetHostInfoList() throws Exception {
+    public List<CollectContext> retriveTargetInfoList() throws Exception {
 
         List<CollectContext> tartgetHostList = null;
         SqlSession session = mteSession.openSession();
         try {
             tartgetHostList = mteCollectorDao.selectTargetHostInfo(session);
-            for(CollectContext ctx : tartgetHostList) {
-               System.out.println(ctx.toString());
+            for(CollectContext collectContext : tartgetHostList) {
+               System.out.println(collectContext.toString());
             }
         } finally {
             session.close();
         }
 
         return tartgetHostList;
+    }
+
+    public boolean saveCollectorResult(JsonObject  jsonObject)throws  Exception{
+        SqlSession session = mteSession.openSession();
+
+        try{
+            jsonObject.entrySet().forEach((e) -> {
+                String key = e.getKey();
+                JsonElement value = e.getValue();
+
+                switch (key){
+                    case "com.mte.dto.CollectorTargetInfoDto":
+                        mteCollectorDao.insertHostInfoNormal(session,gson.fromJson(value, new TypeToken<CollectorTargetInfoDto>(){}.getType()));
+                        break;
+                }
+            });
+        }finally {
+            session.close();
+        }
+        return true;
     }
 
 }

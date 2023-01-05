@@ -1,7 +1,7 @@
 package com.mte.dao;
 
 import com.mte.CollectContext;
-import com.mte.dto.ColletorTargetInfoDto;
+import com.mte.dto.CollectorTargetInfoDto;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.stereotype.Repository;
 
@@ -17,8 +17,8 @@ public class MTECollectorDao {
         return sqlSession.selectList(getMapper("selectTargetHostInfo"));
     }
 
-    public int insertHostInfoNormal(SqlSession sqlSession, ColletorTargetInfoDto dto) {
-        return sqlSession.insert(getMapper("insertHostInfoNormal"), dto);
+    public int insertHostInfoNormal(SqlSession sqlSession, CollectorTargetInfoDto dto) {
+        return sqlSession.insert(getMapper("insertCollectTargetInfo"), dto);
     }
 
 }
